@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" media="screen">
+
+        <title>Tailwind Doc</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <style type="text/tailwindcss">
+            .rotate {
+                animation-name: rotate-anim;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+            }
+
+            .fast-rot {
+                animation-duration: 60s;
+            }
+
+            .mid-rot {
+                animation-duration: 120s;
+            }
+
+            .slow-rot {
+                animation-duration: 180s;
+            }
+
+            .menu-inner-shadow {
+                box-shadow:
+                    inset 0.5rem 0.5rem 0.25rem #ffffff10,
+                    inset -0.5rem -0.5rem 0.25rem #ffffff10,
+                    1rem 0.5rem 0.5rem #00000040;
+            }
+
+            @font-face {
+                font-family: 'RiaSans';
+                src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.0/RiaSans-ExtraBold.woff2') format('woff2');
+                font-weight: normal;
+                font-style: normal;
+            }
+
+            .webkit-stroke {
+                -webkit-text-stroke: 1px white;
+            }
+
+            .blink {
+                animation: blinking 5s linear infinite;
+            }
+
+            @keyframes rotate-anim {
+                from {transform: rotate(0deg)}
+                to {transform: rotate(360deg)}
+            }
+
+            @keyframes blinking {
+                from {background-color: #e7e5e4}
+                to {background-color: #e7e5e4b0;}
+            }
+        </style>
+    </head>
+    <body class="overflow-hidden">
+        <!-- template: star & starlight -->
+        <template id="star-template">
+            <div id="star" class="star absolute size-[4px] bg-stone-200 rounded-lg z-[1]"></div>
+            <div id="starlight" class="starlight absolute size-[8px] bg-stone-600 rounded-lg blur-xs z-[1]"></div>
+        </template>
+
+        <!-- template: moon & moonlight -->
+        <template id="moon-template">
+            <div id="moon" class="moon absolute w-[2rem] h-[2rem] translate-[-50%] bg-stone-200 rounded-full blink"></div>
+            <div id="moonlight" class="moonlight absolute w-[2rem] h-[2rem] translate-[-50%] bg-stone-200 rounded-full blur-md blink"></div>
+        </template>
+
+        <!-- starfield -->
+        <div id="starfield" class="starfield absolute w-full h-[100vh] bg-radial from-[#202020] from-[0%] to-[black] z-[-5]"></div>
+        <div id="star-area" class="absolute w-full h-full rotate mid-rot"></div>
+
+        <!-- logo -->
+        <div id="logo" class="relative w-full h-[100vh]">
+            <img src="src/logo.svg" class="absolute w-64 top-[50%] left-[50%] translate-[-50%] z-[3]"/>
+            <img src="src/logo.svg" class="absolute w-64 top-[50%] left-[50%] translate-[-50%] z-[2] blur-xl"/>
+        </div>
+
+        <!-- '-orbital'ital -->
+        <div id="orbital" class="w-full h-[100vh]">
+            <div id="inner-orbital" class="absolute top-[50%] left-[50%] translate-[-50%] border border-white border-solid rounded-full"></div>
+            <div id="inner-orbital-light" class="absolute top-[50%] left-[50%] translate-[-50%] border-2 border-white border-solid rounded-full blur-sm"></div>
+
+            <div id="middler-orbital" class="absolute top-[50%] left-[50%] translate-[-50%] border border-white border-solid rounded-full"></div>
+            <div id="middler-orbital-light" class="absolute top-[50%] left-[50%] translate-[-50%] border-2 border-white border-solid rounded-full blur-sm"></div>
+
+            <div id="outer-orbital" class="absolute top-[50%] left-[50%] translate-[-50%] border border-white border-solid rounded-full"></div>
+            <div id="outer-orbital-light" class="absolute top-[50%] left-[50%] translate-[-50%] border-2 border-white border-solid rounded-full blur-sm"></div>
+        </div>
+
+        <!-- moon -->
+        <div id="moonfiled" class="moonfield absolute w-full h-[100vh] top-[0px]"></div>
+        <div id="inner-moon-area" class="absolute w-full h-[100vh] top-[0px] rotate fast-rot"></div>
+        <div id="middler-moon-area" class="absolute w-full h-[100vh] top-[0px] rotate mid-rot"></div>
+        <div id="outer-moon-area" class="absolute w-full h-[100vh] top-[0px] rotate slow-rot"></div>
+
+        <!-- title -->
+        <div id="title-area" class="absolute w-full h-[100vh] top-[0px]">
+            <span id="title" class="absolute top-[7.5%] left-[50%] translate-[-50%] font-[RiaSans] text-7xl webkit-stroke text-transparent">ORBIT</span>
+            <span id="title" class="absolute top-[7.5%] left-[50%] translate-[-50%] font-[RiaSans] text-7xl webkit-stroke text-transparent blur-sm">ORBIT</span>
+        </div>
+
+        <!-- milky way -->
+        <div id="as" class="absolute w-full h-[100vh] top-[0px]">
+            <div id="asdf" class="absolute top-[50%] w-full h-[8rem] translate-y-[-50%] bg-indigo-800 blur-[16rem] rotate-[10deg] z-[-4]"></div>
+        </div>
+        
+    </body>
+    <script>
+        const logoRadius = 270
+
+        const starTemplate = document.getElementById('star-template')
+        const moonTemplate = document.getElementById('moon-template')
+
+        const [wndw, wndh] = [window.innerWidth, window.innerHeight]
+
+        const loc = ['inner', 'middler', 'outer']
+        const siz = [30, 45, 60]
+
+        function spreadStar(count = 0) {
+            for(let i = 0; i < count; i++) {
+                const [s, l] = [
+                    starTemplate.content.cloneNode(true).querySelector('.star'),
+                    starTemplate.content.cloneNode(true).querySelector('.starlight')
+                ]
+
+                let randw = 2 * Math.random() * wndw
+                let randh = 2 * Math.random() * wndh
+
+                s.style.top = randh + "px"
+                s.style.left = randw + "px"
+
+                l.style.top = randh - 2 + "px"
+                l.style.left = randw - 2 + "px"
+
+                document.getElementById('star-area').appendChild(s)
+                document.getElementById('star-area').appendChild(l)
+            }
+        }
+
+        function locateOrbit(count = 0) {
+            for(let i = 0; i < count; i++) {
+                document.getElementById(loc[i].concat('-orbital')).style.setProperty('width', siz[i].toString().concat('rem'))
+                document.getElementById(loc[i].concat('-orbital')).style.setProperty('height', siz[i].toString().concat('rem'))
+
+                document.getElementById(loc[i].concat('-orbital').concat('-light')).style.setProperty('width', siz[i].toString().concat('rem'))
+                document.getElementById(loc[i].concat('-orbital').concat('-light')).style.setProperty('height', siz[i].toString().concat('rem'))
+            }
+        }
+
+        function locateMoon(count = 0) {
+            for(let i = 0; i < count; i++) {
+                const [m, l] = [
+                    moonTemplate.content.cloneNode(true).querySelector('.moon'),
+                    moonTemplate.content.cloneNode(true).querySelector('.moonlight')
+                ]
+
+                let locX = wndw /2 - siz[i] * 8
+
+                m.style.top = '50%'
+                m.style.left = locX.toString().concat('px')
+
+                l.style.top = '50%'
+                l.style.left = locX.toString().concat('px')
+
+                document.getElementById(loc[i].concat('-moon-area')).appendChild(m)
+                document.getElementById(loc[i].concat('-moon-area')).appendChild(l)
+            }
+        }
+
+        window.addEventListener('load', () => {
+            spreadStar(160)
+            locateOrbit(3)
+            locateMoon(3)
+        })
+    </script>
+</html>
